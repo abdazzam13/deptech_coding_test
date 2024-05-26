@@ -1,3 +1,4 @@
+import 'package:deptechcodingtest/data/local/model/event.dart';
 import 'package:deptechcodingtest/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,13 @@ class _EventsScreenState extends State<EventsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    homeController.getEventFromDb().then((value){
+      if (value != null && value.length != 0){
+        setState(() {
+          homeController.events = value;
+        });
+      }
+    });
   }
 
   @override
@@ -38,14 +46,18 @@ class _EventsScreenState extends State<EventsScreen> {
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Center(
-            child: Column(
-          children: [
-            itemEvent("24", "MEI", "Nobar Haikyuu", "Event ini diselenggarakan di CGV Grand Indonesia pada tanggal 24 Mei 2024 pukul 17.00", true),
-            itemEvent("24", "MEI", "Nobar Haikyuu", "Event ini diselenggarakan di CGV Grand Indonesia pada tanggal 24 Mei 2024 pukul 17.00", false),
-            itemEvent("24", "MEI", "Nobar Haikyuu", "Event ini diselenggarakan di CGV Grand Indonesia pada tanggal 24 Mei 2024 pukul 17.00", true),
-            itemEvent("24", "MEI", "Nobar Haikyuu", "Event ini diselenggarakan di CGV Grand Indonesia pada tanggal 24 Mei 2024 pukul 17.00", false)
-          ],
-        )),
+          child: homeController.events?.length != 0
+              ? Expanded(
+                  child: ListView.builder(
+                    itemCount: homeController.events?.length,
+                    itemBuilder: (context, index) =>
+                        itemEvent(homeController.events![index]),
+                  ),
+                )
+              : Center(
+                  child: Text("Event List kosong"),
+                ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(
@@ -60,56 +72,61 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  Widget itemEvent(String date, String month, String title, String desc, bool isNotificationOn){
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
+  Widget itemEvent(Event event) {
+    return InkWell(
+      onTap: (){
+        Get.toNamed(AppRoutes.eventDetail, arguments: {"event" : event});
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Color(0XFF3B3C8C),
+          ),
           color: Color(0XFF3B3C8C),
         ),
-        color: Color(0XFF3B3C8C),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Text(
-                date,
-                style: TextStyle(
-                    color: Color(0XFF60D669),
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                month,
-                style: TextStyle(
-                    color: Color(0XFF60D669),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17),
-              )
-            ],
-          ),
-          Column(
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                Helper().cutString(
-                    desc),
-                style: TextStyle(color: Colors.white),
-              )
-            ],
-          ),
-          Icon(
-            isNotificationOn ? Icons.notifications_active : Icons.notifications_off,
-            color: isNotificationOn ? Color(0XFFF7BE61): Colors.red,
-          ),
-        ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                Text(
+                  "${event.date?.split(" ")[0]}",
+                  style: TextStyle(
+                      color: Color(0XFF60D669), fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${event.date?.split(" ")[1]}",
+                  style: TextStyle(
+                      color: Color(0XFF60D669),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17),
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Text(
+                  "${event.title}",
+                  style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  Helper().cutString("${event.desc}"),
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
+            Icon(
+              event.reminderTime != null
+                  ? Icons.notifications_active
+                  : Icons.notifications_off,
+              color: event.reminderTime != null ? Color(0XFFF7BE61) : Colors.red,
+            ),
+          ],
+        ),
       ),
     );
   }

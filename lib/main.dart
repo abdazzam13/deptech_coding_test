@@ -1,3 +1,4 @@
+import 'package:deptechcodingtest/data/local/database/eventDatabase.dart';
 import 'package:deptechcodingtest/data/local/database/userDatabase.dart';
 import 'package:deptechcodingtest/routes/app_pages.dart';
 import 'package:deptechcodingtest/utils/SharedPreferences.dart';
@@ -9,6 +10,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final userDb = await openDatabase(UserDatabase.TABLE_NAME);
   final db = UserDatabase(userDb);
+
+  final eventDb = await openDatabase(EventDatabase.TABLE_NAME);
+  final eventdb = EventDatabase(eventDb);
   await initializeDateFormatting('id_ID', null)
       .then((_) => runApp(const MyApp()));
   await SharedPref.init();

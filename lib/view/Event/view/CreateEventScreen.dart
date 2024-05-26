@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../routes/app_routes.dart';
-import '../controller/CreateEventController.dart';
+import '../controller/EventController.dart';
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({super.key});
@@ -13,14 +13,9 @@ class CreateEventScreen extends StatefulWidget {
 }
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
-  final CreateEventController controller = Get.find();
+  final EventController controller = Get.find();
   bool _reminderEnabled = false;
-  String _selectedReminder = "3 hari sebelum";
-  final List<String> _reminderOptions = [
-    "3 hari sebelum",
-    "1 hari sebelum",
-    "1 jam sebelum"
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +31,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       ),
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      body: GetBuilder<CreateEventController>(
+      body: GetBuilder<EventController>(
         builder: (controller) {
           if (controller.loading.value) {
             return const Center(
@@ -100,14 +95,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             SizedBox(height: 10),
                             Obx(() => ElevatedButton(
                               onPressed: () {
-                                Get.offNamed(AppRoutes.home);
+                                controller.insertEvent().then((value){
+                                  if (value != 0){
+                                    Get.back();
+                                  }
+                                });
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   controller.loading.value
                                       ? CircularProgressIndicator(color: Colors.white)
-                                      : Text("Log in"),
+                                      : Text("Save"),
                                 ],
                               ),
                               style: ElevatedButton.styleFrom(
@@ -218,13 +217,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           Container(
             margin: EdgeInsets.only(left: 20),
             child: DropdownButton<String>(
-              value: _selectedReminder,
+              value: controller.selectedReminder,
               onChanged: (String? newValue) {
                 setState(() {
-                  _selectedReminder = newValue!;
+                  controller.selectedReminder = newValue!;
                 });
               },
-              items: _reminderOptions.map<DropdownMenuItem<String>>((String value) {
+              items: controller.reminderOptions.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),

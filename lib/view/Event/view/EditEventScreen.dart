@@ -1,3 +1,4 @@
+import 'package:deptechcodingtest/view/Event/controller/EventController.dart';
 import 'package:deptechcodingtest/view/component/customTextFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
@@ -6,24 +7,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import '../../../data/local/model/event.dart';
 import '../../../routes/app_routes.dart';
 import '../../../utils/SharedPreferences.dart';
-import '../controller/EditProfileController.dart';
 
-class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+class EditEventScreen extends StatefulWidget {
+  const EditEventScreen({super.key});
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  State<EditEventScreen> createState() => _EditEventScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  final EditProfileController controller = Get.find();
-
+class _EditEventScreenState extends State<EditEventScreen> {
+  final EventController controller = Get.find();
+  Event event = Get.arguments["event"];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    setState(() {
+      controller.picture = event.pic != null ?File(event.pic!) : null;
+      controller.eventTitleController.text = event.title!;
+      controller.eventDescController.text = event.desc!;
+      controller.selectedDateController.text = event.date!;
+      controller.selectedTimeController.text = event.time!;
+    });
   }
 
   @override
@@ -40,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
-        body: GetBuilder<EditProfileController>(builder: (controller) {
+        body: GetBuilder<EventController>(builder: (controller) {
           if (controller.loading.value) {
             return const Center(
               child: CircularProgressIndicator(
@@ -67,9 +75,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ClipOval(
                                     child: SizedBox.fromSize(
                                       size: Size.fromRadius(48), // Image radius
-                                      child: controller.profilePicture != null
+                                      child: controller.picture != null
                                           ? Image.file(
-                                              controller.profilePicture!,
+                                        controller.picture!,
                                               scale: 0.5,
                                               fit: BoxFit.cover,
                                             )
@@ -120,73 +128,49 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ],
                               ),
                               CustomTextFormField(
-                                label: "Nama Depan",
-                                controller: controller.firstNameController,
+                                label: "Judul Agenda",
+                                controller: controller.eventTitleController,
                                 isPassword: false,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Nama Depan tidak boleh kosong';
+                                validator: (value){
+                                  if (value == null){
+                                    return 'Judul agenda tidak boleh kosong';
                                   }
                                 },
                               ),
                               CustomTextFormField(
-                                label: "Nama Belakang",
-                                controller: controller.lastNameController,
+                                label: "Deskripsi Agenda",
+                                controller: controller.eventDescController,
                                 isPassword: false,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Nama belakang tidak boleh kosong';
+                                validator: (value){
+                                  if (value == null){
+                                    return 'Deskripsi agenda tidak boleh kosong';
                                   }
                                 },
                               ),
                               CustomTextFormField(
-                                label: "Email",
-                                controller: controller.emailController,
+                                label: "Tanggal Agenda",
+                                controller: controller.selectedDateController,
                                 isPassword: false,
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'Email tidak boleh kosong';
-                                  } else if (!RegExp(
-                                      r"[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
-                                      .hasMatch(value)) {
-                                    return 'Format email tidak valid';
+                                    return 'Tanggal tidak boleh kosong';
                                   }
                                 },
                               ),
                               CustomTextFormField(
-                                label: "Tanggal Lahir",
-                                controller: controller.birthdateController,
+                                label: "Waktu Agenda",
+                                controller: controller.selectedTimeController,
                                 isPassword: false,
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'Tanggal lahir tidak boleh kosong';
-                                  }
-                                },
-                              ),
-                              CustomTextFormField(
-                                label: "Jenis Kelamin",
-                                controller: controller.genderController,
-                                isPassword: false,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Jenis kelamin tidak boleh kosong';
-                                  }
-                                },
-                              ),
-                              CustomTextFormField(
-                                label: "Password",
-                                controller: controller.passwordController,
-                                isPassword: true,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Password tidak boleh kosong';
+                                    return 'Waktu Agenda tidak boleh kosong';
                                   }
                                 },
                               ),
                               SizedBox(height: 20.0),
                               Obx(() => ElevatedButton(
                                     onPressed: () {
-                                      controller.updateUserByEmail().then((value){
+                                      controller.updateEvent(event.id!, event.reminderTime).then((value){
                                         print("value update $value");
                                         if (value != 0){
                                           Get.back();

@@ -21,7 +21,7 @@ class UserDatabase {
   }
 
   Future<void> _initializeDatabase() async {
-    final db = await openDatabase('user_database.db');  // Nama file database
+    final db = await openDatabase(TABLE_NAME);  // Nama file database
     // Cek apakah tabel sudah ada
     List<Map<String, dynamic>> tables = await db.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='$TABLE_NAME'");
@@ -45,13 +45,13 @@ class UserDatabase {
   }
 
   Future<int> insertUser(User user) async {
-    final Database db = await openDatabase('user_database.db');
+    final Database db = await openDatabase(TABLE_NAME);
     final id = await db.insert(TABLE_NAME, user.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 
   Future<User?> getUserByEmail(String email) async {
-    final Database db = await openDatabase('user_database.db');
+    final Database db = await openDatabase(TABLE_NAME);
     final List<Map<String, dynamic>> maps = await db.query(
       TABLE_NAME,
       where: '$COLUMN_EMAIL = ?',
@@ -66,7 +66,7 @@ class UserDatabase {
   }
 
   Future<int> updateUserByEmail(String email, User user) async {
-    final Database db = await openDatabase('user_database.db');
+    final Database db = await openDatabase(TABLE_NAME);
     final int count = await db.update(
       TABLE_NAME,
       user.toJson(),
@@ -78,7 +78,7 @@ class UserDatabase {
   }
 
   Future<void> dropTable() async {
-    final db = await openDatabase('user_database.db');
+    final db = await openDatabase(TABLE_NAME);
     await db.execute("DROP TABLE IF EXISTS $TABLE_NAME");
   }
 }

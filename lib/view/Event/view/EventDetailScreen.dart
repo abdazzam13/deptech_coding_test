@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:deptechcodingtest/view/Event/controller/EventController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,18 +8,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../utils/SharedPreferences.dart';
-import '../../controller/HomeController.dart';
+import '../../../data/local/model/event.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class EventDetailScreen extends StatefulWidget {
+  const EventDetailScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<EventDetailScreen> createState() => _EventDetailScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  final HomeController homeController = Get.find();
-
+class _EventDetailScreenState extends State<EventDetailScreen> {
+  final EventController controller = Get.find();
+  Event event = Get.arguments["event"];
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           centerTitle: true,
         ),
-        body: GetBuilder<HomeController>(builder: (controller) {
+        body: GetBuilder<EventController>(builder: (controller) {
           if (controller.loading.value) {
             return const Center(
               child: CircularProgressIndicator(
@@ -63,35 +63,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 20,
                             ),
                             Center(
-                              child: ClipOval(
-                                child: SizedBox.fromSize(
-                                  size: Size.fromRadius(48), // Image radius
-                                  child: controller.profilePicture != null
-                                      ? Image.file(
-                                    controller.profilePicture!,
-                                    scale: 0.5,
-                                    fit: BoxFit.cover,
-                                  )
-                                      : Image.asset(
-                                      "assets/placeholder.png"),
-                                ),
-                              ),
+                              child: event.pic != null
+                                  ? Image.file(
+                                File(event.pic!),
+                                scale: 0.5,
+                                fit: BoxFit.cover,
+                              )
+                                  : Image.asset(
+                                  "assets/placeholder.png"),
                             ),
-
-                            itemProfileDetail("Nama Depan", controller.firstName ?? "Abdullah"),
-                            itemProfileDetail("Nama Belakang",controller.lastName ?? "Azzam"),
-                            itemProfileDetail("Email",controller.email ?? "abdullah.azzam130@gmail.com"),
-                            itemProfileDetail("Tanggal Lahir",controller.birthdate ?? "13 September 2000"),
-                            itemProfileDetail("Jenis Kelamin",controller.gender ?? "Laki-laki"),
-                            itemProfileDetail("Password", controller.password ??"hehehehehehehe"),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            itemProfileDetail("Judul Agenda", event.title ?? "Nobar Haikyuu"),
+                            itemProfileDetail("Deskripsi Agenda",event.desc ?? "Nobar di CGV GI"),
+                            itemProfileDetail("Tanggal Agenda", event.date ?? "24 Mei 2024"),
+                            itemProfileDetail("Waktu Agenda", event.time ?? "17.00 WIB"),
                             Container(
                               margin: EdgeInsets.only(top: 10),
                               width: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Get.toNamed(AppRoutes.editProfile);
+                                  Get.toNamed(AppRoutes.editEvent, arguments: {"event" : event});
                                 },
-                                child: Text("Edit Profile", style: TextStyle(
+                                child: Text("Edit Event", style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16
                                 ),),
@@ -102,26 +97,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(top: 10),
-                              width: MediaQuery.of(context).size.width,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  SharedPref.setIsRememberMe(false);
-                                  Get.offNamed(AppRoutes.login);
-                                },
-                                child: Text("Logout", style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16
-                                ),),
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.red,
-
-                                ),
-                              ),
-                            ),
-
                           ],
                         ),
                       )
