@@ -1,8 +1,17 @@
+import 'package:deptechcodingtest/data/local/database/userDatabase.dart';
 import 'package:deptechcodingtest/routes/app_pages.dart';
+import 'package:deptechcodingtest/utils/SharedPreferences.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-void main() {
-  runApp(const MyApp());
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:sqflite/sqflite.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final userDb = await openDatabase(UserDatabase.TABLE_NAME);
+  final db = UserDatabase(userDb);
+  await initializeDateFormatting('id_ID', null)
+      .then((_) => runApp(const MyApp()));
+  await SharedPref.init();
 }
 
 class MyApp extends StatelessWidget {

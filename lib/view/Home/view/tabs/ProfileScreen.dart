@@ -19,34 +19,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final HomeController homeController = Get.find();
-  ImagePicker picker = ImagePicker();
-  File? profilePicture;
 
-  Future pickImageFromGallery() async {
-    try {
-      final image = await picker.pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final imageTemporary = File(image.path);
-      setState(() {
-        profilePicture = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('gagal mengambil gambar dari galeri $e');
-    }
-  }
 
-  Future takePictureWithCamera() async {
-    try {
-      final image = await picker.pickImage(source: ImageSource.camera);
-      if (image == null) return;
-      final imageTemporary = File(image.path);
-      setState(() {
-        profilePicture = imageTemporary;
-      });
-    } on PlatformException catch (e) {
-      print('gagal mengambil gambar dari galeri $e');
-    }
-  }
   @override
   void initState() {
     // TODO: implement initState
@@ -78,95 +52,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SingleChildScrollView(
                     child: SizedBox(
                       height: MediaQuery.of(context).size.height,
-                      child: Center(
-                        child: Column(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child:
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
                               height: 20,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipOval(
-                                  child: SizedBox.fromSize(
-                                    size: Size.fromRadius(48), // Image radius
-                                    child: profilePicture != null
-                                        ? Image.file(
-                                      profilePicture!,
-                                      scale: 0.5,
-                                      fit: BoxFit.cover,
-                                    )
-                                        : Image.asset(
-                                        "assets/placeholder.png"),
-                                  ),
+                            Center(
+                              child: ClipOval(
+                                child: SizedBox.fromSize(
+                                  size: Size.fromRadius(48), // Image radius
+                                  child: controller.profilePicture != null
+                                      ? Image.file(
+                                    controller.profilePicture!,
+                                    scale: 0.5,
+                                    fit: BoxFit.cover,
+                                  )
+                                      : Image.asset(
+                                      "assets/placeholder.png"),
                                 ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    bool? isCamera = await showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                takePictureWithCamera();
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text("Camera"),
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                pickImageFromGallery();
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text("Gallery"),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                    isCamera!
-                                        ? takePictureWithCamera()
-                                        : pickImageFromGallery();
-                                  },
-                                  child: Icon(Icons.edit),
-                                )
-                              ],
+                              ),
                             ),
 
-                            Text("Nama Depan: Abdullah"),
-                            Text("Nama Belakang: Azzam"),
-                            Text(
-                              "Email: ${SharedPref().getEmail() ?? "email.com"}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            Text("Tanggal Lahir: 13 September 2000"),
-                            Text("Jenis Kelamin: Laki-laki"),
-                            Text("Password: Abdullah"),
-
-                            ElevatedButton(
-                              onPressed: () {
-                                Get.offNamed(AppRoutes.login);
-                              },
-                              child: Text("Logout"),
-                              style: ElevatedButton.styleFrom(
+                            itemProfileDetail("Nama Depan", controller.firstName ?? "Abdullah"),
+                            itemProfileDetail("Nama Belakang",controller.lastName ?? "Azzam"),
+                            itemProfileDetail("Email",controller.email ?? "abdullah.azzam130@gmail.com"),
+                            itemProfileDetail("Tanggal Lahir",controller.birthdate ?? "13 September 2000"),
+                            itemProfileDetail("Jenis Kelamin",controller.gender ?? "Laki-laki"),
+                            itemProfileDetail("Password", controller.password ??"hehehehehehehe"),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              width: MediaQuery.of(context).size.width,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.toNamed(AppRoutes.editProfile);
+                                },
+                                child: Text("Edit Profile", style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16
+                                ),),
+                                style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
-                                  backgroundColor: Colors.red),
-                            )
+                                  backgroundColor: Color(0XFF3B3C8C),
+
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              width: MediaQuery.of(context).size.width,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.offNamed(AppRoutes.login);
+                                },
+                                child: Text("Logout", style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16
+                                ),),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.red,
+
+                                ),
+                              ),
+                            ),
+
                           ],
                         ),
-                      ),
+                      )
                     )),
                 onRefresh: () async {});
           }
         }));
+  }
+
+  Widget itemProfileDetail(String title, String data){
+    return  Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(title,style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 16
+        ),),
+        Text(data),
+      ],
+    );
   }
 }

@@ -1,3 +1,7 @@
+import 'package:deptechcodingtest/view/CreateEvent/binding/CreateEventBinding.dart';
+import 'package:deptechcodingtest/view/CreateEvent/view/CreateEventScreen.dart';
+import 'package:deptechcodingtest/view/EditProfile/binding/EditProfileBinding.dart';
+import 'package:deptechcodingtest/view/EditProfile/view/EditProfileScreen.dart';
 import 'package:get/get.dart';
 import '../view/Home/binding/homeBinding.dart';
 import '../view/Home/view/HomeScreen.dart';
@@ -23,6 +27,14 @@ class AppPages {
         name: AppRoutes.home,
         page: () => HomeScreen(),
         binding: HomeBinding()),
+    GetPage(
+        name: AppRoutes.editProfile,
+        page: () => EditProfileScreen(),
+        binding: EditProfileBinding()),
+    GetPage(
+        name: AppRoutes.createEvent,
+        page: () => CreateEventScreen(),
+        binding: CreateEventBinding()),
 
   ];
 }

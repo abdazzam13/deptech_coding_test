@@ -4,7 +4,6 @@ abstract class AppRoutes {
   static const splashscreen = '/';
   static const login = '/login';
   static const home = '/home';
-  static const assessment = '/assessment';
-  static const dummy ='/dummy';
-
+  static const editProfile = '/editProfile';
+  static const createEvent = '/createEvent';
 }
