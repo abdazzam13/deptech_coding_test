@@ -19,13 +19,13 @@ class User {
 
   // Dari JSON ke model User
   User.fromJson(Map<String, dynamic> json) {
-    firstName =json['firstName'];
+    firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
-    birthdate =json['birthdate'];
+    birthdate = json['birthdate'];
     gender = json['gender'];
     password = json['password'];
-    profilePic =  json['profilePic'];
+    profilePic = json['profilePic'];
   }
 
   // Dari model User ke JSON

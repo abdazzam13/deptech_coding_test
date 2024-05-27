@@ -7,11 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
-import '../../../data/local/database/userDatabase.dart';
 import '../../../data/local/model/event.dart';
-import '../../../routes/app_routes.dart';
-import '../../../utils/SharedPreferences.dart';
-import '../../component/customSnackbar.dart';
 
 class EventController extends GetxController {
   var loading = false.obs;
@@ -28,10 +24,10 @@ class EventController extends GetxController {
   final firstDate = DateTime.now();
   final lastDate = DateTime(2050, 12);
 
-  String selectedReminder = "3 hari sebelum";
+  String selectedReminder = "1 hari sebelum";
   final List<String> reminderOptions = [
-    "3 hari sebelum",
     "1 hari sebelum",
+    "3 jam sebelum",
     "1 jam sebelum"
   ];
 
@@ -124,7 +120,7 @@ class EventController extends GetxController {
     final count = db.updateEvents(
         id,
         Event(
-          id: id,
+            id: id,
             title: eventTitleController.text,
             desc: eventDescController.text,
             date: selectedDateController.text,

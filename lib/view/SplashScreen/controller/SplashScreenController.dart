@@ -7,24 +7,23 @@ import '../../../routes/app_routes.dart';
 import '../../../utils/SharedPreferences.dart';
 
 class SplashController extends GetxController {
-
   @override
   void onReady() {
     // TODO: implement onReady
     super.onReady();
     timer();
-    getUserFromDb("candidate@deptechdigital.com").then((value){
-      if (value == null){
+    getUserFromDb("candidate@deptechdigital.com").then((value) {
+      if (value == null) {
         insertUserToDb();
       }
     });
-    print("isLogin ${SharedPref().getIsRememberMe()}");
+    print("isLogin ${SharedPref().getIsLogin()}");
   }
 
   void timer() {
     var timer = const Duration(seconds: 4);
     Timer(timer, () {
-      if (SharedPref().getIsRememberMe() == true) {
+      if (SharedPref().getIsLogin() == true) {
         Get.offAllNamed(AppRoutes.home);
       } else {
         Get.offAllNamed(AppRoutes.login);
@@ -41,10 +40,9 @@ class SplashController extends GetxController {
         lastName: "Azzam",
         email: "candidate@deptechdigital.com",
         birthdate: "13 September 2000",
-        gender:"Laki-laki",
+        gender: "Laki-laki",
         password: "testInterview123!",
-        profilePic: null
-    ));
+        profilePic: null));
     return id;
   }
 
@@ -55,5 +53,4 @@ class SplashController extends GetxController {
     var user = db.getUserByEmail(email);
     return user;
   }
-
 }

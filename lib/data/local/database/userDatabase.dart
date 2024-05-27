@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:sqflite/sqflite.dart';
-
 import '../model/user.dart';
 
 class UserDatabase {
-  static const String TABLE_NAME = "users";  // Nama tabel pengguna
+  static const String TABLE_NAME = "users"; // Nama tabel pengguna
   static const String COLUMN_FIRST_NAME = "firstName";
   static const String COLUMN_LAST_NAME = "lastName";
   static const String COLUMN_EMAIL = "email";
@@ -21,7 +18,7 @@ class UserDatabase {
   }
 
   Future<void> _initializeDatabase() async {
-    final db = await openDatabase(TABLE_NAME);  // Nama file database
+    final db = await openDatabase(TABLE_NAME); // Nama file database
     // Cek apakah tabel sudah ada
     List<Map<String, dynamic>> tables = await db.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='$TABLE_NAME'");
@@ -46,7 +43,8 @@ class UserDatabase {
 
   Future<int> insertUser(User user) async {
     final Database db = await openDatabase(TABLE_NAME);
-    final id = await db.insert(TABLE_NAME, user.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+    final id = await db.insert(TABLE_NAME, user.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 

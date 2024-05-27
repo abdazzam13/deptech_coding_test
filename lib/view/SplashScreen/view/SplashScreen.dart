@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../utils/SharedPreferences.dart';
 import '../controller/SplashScreenController.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 

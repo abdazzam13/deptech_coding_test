@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:deptechcodingtest/data/local/model/event.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../model/user.dart';
 
 class EventDatabase {
   static const String TABLE_NAME = "events";  // Nama tabel pengguna

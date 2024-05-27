@@ -8,43 +8,46 @@ import '../../../routes/app_routes.dart';
 import '../../../utils/SharedPreferences.dart';
 import '../../component/customSnackbar.dart';
 import 'package:sqflite/sqflite.dart';
+
 class LoginController extends GetxController {
   var loading = false.obs;
   var isInternetConnected = false.obs;
   var isObscureText = true;
   var checkedValue = false;
+
   @override
   void onReady() {
     // TODO: implement onReady
     super.onReady();
   }
 
-  Future<void> login(BuildContext context, String email, String password) async{
+  Future<void> login(
+      BuildContext context, String email, String password) async {
     loading.value = true;
-    getUserFromDb(email).then((value){
+    getUserFromDb(email).then((value) {
       print("user ${value}");
-      if (value != null){
-        if (value.email == email && value.password == password){
+      if (value != null) {
+        if (value.email == email && value.password == password) {
           loading.value = false;
           SharedPref.setEmail(email);
           SharedPref.setPassword(password);
-          SharedPref.setIsRememberMe(true);
+          SharedPref.setIsLogin(true);
           Get.offNamed(AppRoutes.home);
         }
-       if (value.email != email){
-         loading.value = false;
-         CustomSnackBar.show(context, "Email yang Anda ketikkan salah", false);
-       }
-       if (value.password != password){
-         loading.value = false;
-         CustomSnackBar.show(context, "Password yang Anda ketikkan salah", false);
-       }
+        if (value.email != email) {
+          loading.value = false;
+          CustomSnackBar.show(context, "Email yang Anda ketikkan salah", false);
+        }
+        if (value.password != password) {
+          loading.value = false;
+          CustomSnackBar.show(
+              context, "Password yang Anda ketikkan salah", false);
+        }
       } else {
         loading.value = false;
         CustomSnackBar.show(context, "User not found", false);
       }
     });
-
   }
 
   Future<User?> getUserFromDb(String email) async {
@@ -54,6 +57,4 @@ class LoginController extends GetxController {
     var user = db.getUserByEmail(email);
     return user;
   }
-
-
 }

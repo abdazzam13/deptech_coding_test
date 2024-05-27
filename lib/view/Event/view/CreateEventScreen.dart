@@ -1,8 +1,15 @@
+import 'dart:math';
+import 'package:deptechcodingtest/utils/notificationService.dart';
+import 'package:deptechcodingtest/view/component/customDatePicker.dart';
+import 'package:deptechcodingtest/view/component/customSetReminder.dart';
 import 'package:deptechcodingtest/view/component/customTextFormField.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import '../../../routes/app_routes.dart';
+import '../../component/customTimePicker.dart';
+import '../../component/customUploadImage.dart';
+import '../../component/sectionTitle.dart';
 import '../controller/EventController.dart';
 
 class CreateEventScreen extends StatefulWidget {
@@ -14,8 +21,7 @@ class CreateEventScreen extends StatefulWidget {
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
   final EventController controller = Get.find();
-  bool _reminderEnabled = false;
-
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -49,43 +55,47 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Form(
+                        key: _formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            _buildSectionTitle("Judul Agenda"),
+                            sectionTitle(title: "Judul Agenda"),
                             CustomTextFormField(
                               label: "Judul Agenda",
                               controller: controller.eventTitleController,
                               isPassword: false,
-                              validator: (value){
-                                if (value == null){
+                              validator: (value) {
+                                if (value == null) {
                                   return 'Judul agenda tidak boleh kosong';
                                 }
                               },
                             ),
-                            _buildSectionTitle("Deskripsi Agenda"),
+                            sectionTitle(title: "Deskripsi Agenda"),
                             CustomTextFormField(
                               label: "Deskripsi Agenda",
                               controller: controller.eventDescController,
                               isPassword: false,
-                              validator: (value){
-                                if (value == null){
+                              validator: (value) {
+                                if (value == null) {
                                   return 'Deskripsi agenda tidak boleh kosong';
                                 }
                               },
                             ),
-                            _buildSectionTitle("Pilih Tanggal Agenda"),
+                            sectionTitle(title: "Pilih Tanggal Agenda"),
                             SizedBox(height: 10),
-                            _buildDatePicker(context),
+                            customDatePicker(
+                              controller: controller,
+                            ),
                             SizedBox(height: 10),
-                            _buildSectionTitle("Pilih Waktu Agenda"),
-                            _buildTimePicker(context),
+                            sectionTitle(title: "Pilih Waktu Agenda"),
+                            customTimePicker(
+                                controller: controller, context: context),
                             SizedBox(height: 10),
-                            _buildSectionTitle("Nyalakan Pengingat?"),
-                            _buildReminderSection(),
+                            sectionTitle(title: "Nyalakan Pengingat?"),
+                            customSetReminder(controller: controller),
                             SizedBox(height: 10),
-                            _buildSectionTitle("Lampiran"),
-                            _buildAttachmentOptions(),
+                            sectionTitle(title: "Lampiran"),
+                            customUploadImage(controller: controller),
                             if (controller.picture != null)
                               Image.file(
                                 controller.picture!,
@@ -94,29 +104,33 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                               ),
                             SizedBox(height: 10),
                             Obx(() => ElevatedButton(
-                              onPressed: () {
-                                controller.insertEvent().then((value){
-                                  if (value != 0){
-                                    Get.back();
-                                  }
-                                });
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  controller.loading.value
-                                      ? CircularProgressIndicator(color: Colors.white)
-                                      : Text("Save"),
-                                ],
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0XFF3B3C8C),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                            )),
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      controller.insertEvent().then((value) {
+                                        if (value != 0) {
+                                          Get.offAllNamed(AppRoutes.home);
+                                        }
+                                      });
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      controller.loading.value
+                                          ? CircularProgressIndicator(
+                                              color: Colors.white)
+                                          : Text("Save"),
+                                    ],
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0XFF3B3C8C),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                )),
                           ],
                         ),
                       ),
@@ -129,129 +143,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           }
         },
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 17,
-      ),
-    );
-  }
-
-  Widget _buildDatePicker(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(Icons.calendar_month_sharp),
-            SizedBox(width: 10),
-            Text(
-              "${controller.selectedDate.day} ${controller.getMonth(controller.selectedDate.month)} ${controller.selectedDate.year}",
-            ),
-            Spacer(),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  controller.isEditDate = !controller.isEditDate;
-                });
-              },
-              child: Icon(Icons.edit),
-            ),
-          ],
-        ),
-        if (controller.isEditDate)
-          CalendarDatePicker(
-            initialDate: controller.selectedDate,
-            firstDate: controller.firstDate,
-            lastDate: controller.lastDate,
-            onDateChanged: (newDate) {
-              setState(() {
-                controller.selectedDate = newDate;
-              });
-            },
-          ),
-      ],
-    );
-  }
-
-  Widget _buildTimePicker(BuildContext context) {
-    return Row(
-      children: [
-        InkWell(
-          onTap: () {
-            controller.selectTime(context);
-          },
-          child: Icon(Icons.access_time),
-        ),
-        SizedBox(width: 10),
-        Text("${controller.selectedTime.hour} : ${controller.selectedTime.minute} WIB"),
-        Spacer(),
-        InkWell(
-          onTap: () {
-            controller.selectTime(context);
-          },
-          child: Icon(Icons.edit),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildReminderSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SwitchListTile(
-          title: Text("Aktifkan Pengingat"),
-          value: _reminderEnabled,
-          onChanged: (bool value) {
-            setState(() {
-              _reminderEnabled = value;
-            });
-          },
-        ),
-        if (_reminderEnabled)
-          Container(
-            margin: EdgeInsets.only(left: 20),
-            child: DropdownButton<String>(
-              value: controller.selectedReminder,
-              onChanged: (String? newValue) {
-                setState(() {
-                  controller.selectedReminder = newValue!;
-                });
-              },
-              items: controller.reminderOptions.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          )
-      ],
-    );
-  }
-
-  Widget _buildAttachmentOptions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            controller.takePictureWithCamera();
-          },
-          child: Text("Camera"),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            controller.pickImageFromGallery();
-          },
-          child: Text("Gallery"),
-        ),
-      ],
     );
   }
 }

@@ -26,9 +26,7 @@ class AppPages {
         page: () => LoginScreen(),
         binding: LoginBinding()),
     GetPage(
-        name: AppRoutes.home,
-        page: () => HomeScreen(),
-        binding: HomeBinding()),
+        name: AppRoutes.home, page: () => HomeScreen(), binding: HomeBinding()),
     GetPage(
         name: AppRoutes.editProfile,
         page: () => EditProfileScreen(),
@@ -45,6 +43,5 @@ class AppPages {
         name: AppRoutes.editEvent,
         page: () => EditEventScreen(),
         binding: EventBinding()),
-
   ];
 }

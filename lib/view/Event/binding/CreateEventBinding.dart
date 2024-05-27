@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-
 import '../controller/EventController.dart';
 
 class EventBinding extends Bindings {

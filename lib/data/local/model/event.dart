@@ -20,7 +20,7 @@ class Event {
   // Dari JSON ke model User
   Event.fromJson(Map<String, dynamic> json) {
     id = json["id"];
-    title =json['title'];
+    title = json['title'];
     desc = json['desc'];
     date = json['date'];
     time = json['time'];
@@ -31,7 +31,7 @@ class Event {
   // Dari model User ke JSON
   Map<String, dynamic> toJson() {
     return {
-      'id' : id,
+      'id': id,
       'title': title,
       'desc': desc,
       'date': date,

@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-
 import '../controller/LoginController.dart';
 
 class LoginBinding extends Bindings {

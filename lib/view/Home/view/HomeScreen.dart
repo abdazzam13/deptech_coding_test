@@ -3,7 +3,6 @@ import 'package:deptechcodingtest/view/Home/view/tabs/ProfileScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sqflite/sqflite.dart';
 import '../controller/HomeController.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,12 +16,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final HomeController homeController = Get.find();
   var isInternet = false.obs;
   int _selectedIndex = 0;
-  List _buildScreens =
-  [
-
+  List _buildScreens = [
     EventsScreen(),
     ProfileScreen(),
   ];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -34,9 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: _buildScreens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-
         currentIndex: _selectedIndex,
-        onTap: (index){
+        onTap: (index) {
           setState(() {
             _selectedIndex = index;
           });
@@ -57,7 +54,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 }
-
-

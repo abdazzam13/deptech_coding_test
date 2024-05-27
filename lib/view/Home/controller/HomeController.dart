@@ -1,16 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../data/local/database/eventDatabase.dart';
 import '../../../data/local/database/userDatabase.dart';
 import '../../../data/local/model/event.dart';
 import '../../../data/local/model/user.dart';
-import '../../../routes/app_routes.dart';
 import '../../../utils/SharedPreferences.dart';
-import '../../component/customSnackbar.dart';
 
 class HomeController extends GetxController {
   var loading = false.obs;

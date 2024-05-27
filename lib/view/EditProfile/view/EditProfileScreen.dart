@@ -1,13 +1,9 @@
 import 'package:deptechcodingtest/view/component/customTextFormField.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../routes/app_routes.dart';
-import '../../../utils/SharedPreferences.dart';
 import '../controller/EditProfileController.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -19,6 +15,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final EditProfileController controller = Get.find();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -58,6 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 20),
                         child: Form(
+                          key: _formKey,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -147,7 +145,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   if (value == null) {
                                     return 'Email tidak boleh kosong';
                                   } else if (!RegExp(
-                                      r"[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
+                                          r"[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
                                       .hasMatch(value)) {
                                     return 'Format email tidak valid';
                                   }
@@ -186,12 +184,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               SizedBox(height: 20.0),
                               Obx(() => ElevatedButton(
                                     onPressed: () {
-                                      controller.updateUserByEmail().then((value){
-                                        print("value update $value");
-                                        if (value != 0){
-                                          Get.back();
-                                        }
-                                      });
+                                      if (_formKey.currentState!.validate()) {
+                                        controller
+                                            .updateUserByEmail()
+                                            .then((value) {
+                                          print("value update $value");
+                                          if (value != 0) {
+                                            Get.offAllNamed(AppRoutes.home);
+                                          }
+                                        });
+                                      }
                                     },
                                     child: Container(
                                       child: Row(

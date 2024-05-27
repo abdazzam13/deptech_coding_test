@@ -2,14 +2,10 @@ import 'package:deptechcodingtest/view/Event/controller/EventController.dart';
 import 'package:deptechcodingtest/view/component/customTextFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../data/local/model/event.dart';
-import '../../../routes/app_routes.dart';
-import '../../../utils/SharedPreferences.dart';
 
 class EditEventScreen extends StatefulWidget {
   const EditEventScreen({super.key});
@@ -21,12 +17,13 @@ class EditEventScreen extends StatefulWidget {
 class _EditEventScreenState extends State<EditEventScreen> {
   final EventController controller = Get.find();
   Event event = Get.arguments["event"];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     setState(() {
-      controller.picture = event.pic != null ?File(event.pic!) : null;
+      controller.picture = event.pic != null ? File(event.pic!) : null;
       controller.eventTitleController.text = event.title!;
       controller.eventDescController.text = event.desc!;
       controller.selectedDateController.text = event.date!;
@@ -77,7 +74,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                       size: Size.fromRadius(48), // Image radius
                                       child: controller.picture != null
                                           ? Image.file(
-                                        controller.picture!,
+                                              controller.picture!,
                                               scale: 0.5,
                                               fit: BoxFit.cover,
                                             )
@@ -131,8 +128,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                 label: "Judul Agenda",
                                 controller: controller.eventTitleController,
                                 isPassword: false,
-                                validator: (value){
-                                  if (value == null){
+                                validator: (value) {
+                                  if (value == null) {
                                     return 'Judul agenda tidak boleh kosong';
                                   }
                                 },
@@ -141,8 +138,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                 label: "Deskripsi Agenda",
                                 controller: controller.eventDescController,
                                 isPassword: false,
-                                validator: (value){
-                                  if (value == null){
+                                validator: (value) {
+                                  if (value == null) {
                                     return 'Deskripsi agenda tidak boleh kosong';
                                   }
                                 },
@@ -170,9 +167,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
                               SizedBox(height: 20.0),
                               Obx(() => ElevatedButton(
                                     onPressed: () {
-                                      controller.updateEvent(event.id!, event.reminderTime).then((value){
+                                      controller
+                                          .updateEvent(
+                                              event.id!, event.reminderTime)
+                                          .then((value) {
                                         print("value update $value");
-                                        if (value != 0){
+                                        if (value != 0) {
                                           Get.back();
                                         }
                                       });

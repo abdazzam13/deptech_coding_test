@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'package:get/get.dart';
-import 'Constants.dart';
-import 'SharedPreferences.dart';
-
 class Helper {
   String capitalizeFirstLetter(String input) {
     List<String> words = input.split(" ");
@@ -13,6 +8,7 @@ class Helper {
     }
     return words.join(" ");
   }
+
   String cutString(String string) {
     if (string.length > 30) {
       return string.substring(0, 30) + "...";
@@ -20,5 +16,4 @@ class Helper {
       return string;
     }
   }
-
 }
